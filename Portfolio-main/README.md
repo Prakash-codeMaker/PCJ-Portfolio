@@ -1,19 +1,22 @@
 # Prakash Chand Jain — Portfolio
 
-Premium single-page portfolio for Prakash Chand Jain — Software & AI Engineer.
+Premium static portfolio, ready for the existing GitHub → Vercel workflow.
 
-## Run locally
+## Root structure
 
-Open `index.html` directly, or use any static server:
+- `index.html`
+- `photo.png.jpg`
+- `resume.pdf`
+- `assets/`
 
-```bash
-python -m http.server 8000
-```
-
-Then visit `http://localhost:8000`.
-
-## Deploy
-
-This is a plain static site. Keep `index.html`, `photo.png.jpg`, and `resume.pdf` at the repository root for the simplest Vercel deployment.
+## Vercel
 
 No `vercel.json` is required.
+
+Use the repository root as the Vercel Root Directory, framework preset `Other`, and leave Build Command / Install Command empty.
+
+## Verified live product links
+
+- GAINN: https://ever-news-flow.lovable.app
+- StoryLens: https://storylens-ai-w8gn.bolt.host
+- RecoverIT: https://recoverit.hatchable.site
