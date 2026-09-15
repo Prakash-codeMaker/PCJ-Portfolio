@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Portfolio of Prakash Chand Jain — Software & AI Engineer building reliable AI systems, automation pipelines, and product-grade tools.">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta property="og:title" content="Prakash Chand Jain — Software & AI Engineer">
+  <meta property="og:description" content="I build systems for problems that don't come with clean specifications.">
+  <title>Prakash Chand Jain — Software & AI Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#080808;--panel:#0e0e0e;--panel-2:#121212;--line:#252525;--text:#f4f4f1;--muted:#9d9d98;--soft:#c9c9c3;--accent:#d7ff4f;--accent-2:#7df0bf;--max:1180px;--radius:22px;--mono:'DM Mono',monospace;--sans:'Manrope',system-ui,sans-serif}
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;background:var(--bg)}
+    body{font-family:var(--sans);color:var(--text);background:radial-gradient(900px 500px at 80% -10%,rgba(215,255,79,.09),transparent 60%),radial-gradient(700px 500px at 0% 30%,rgba(125,240,191,.05),transparent 60%),var(--bg);line-height:1.6}
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+    ::selection{background:var(--accent);color:#0a0a0a}
+    .skip{position:fixed;left:-9999px;top:10px;z-index:1000;padding:10px 14px;background:var(--accent);color:#000;border-radius:8px}.skip:focus{left:10px}
+    .shell{width:min(var(--max),calc(100% - 40px));margin:0 auto}
+    .nav{position:sticky;top:0;z-index:100;background:rgba(8,8,8,.82);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.06)}
+    .nav-inner{height:72px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+    .brand{font-size:15px;font-weight:800;letter-spacing:-.02em}.brand span{color:var(--accent)}
+    .nav-links{display:flex;gap:22px;align-items:center}.nav-links a{font-size:13px;color:var(--muted);transition:.2s}.nav-links a:hover,.nav-links a:focus{color:var(--text)}
+    .nav-actions{display:flex;gap:10px;align-items:center}.icon-link,.resume-link{border:1px solid var(--line);border-radius:999px;padding:9px 13px;font-size:12px}.icon-link{color:var(--muted)}.resume-link{border-color:#424824;background:rgba(215,255,79,.06);color:var(--accent)}
+    .menu{display:none;border:1px solid var(--line);background:transparent;color:var(--text);padding:8px 10px;border-radius:10px;cursor:pointer}
+    main{overflow:hidden}
+    .hero{min-height:calc(100vh - 72px);display:grid;grid-template-columns:1.08fr .92fr;gap:70px;align-items:center;padding:90px 0 80px;position:relative}
+    .eyebrow{display:flex;gap:10px;align-items:center;font:500 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.14em;margin-bottom:18px}.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 24px rgba(215,255,79,.55)}
+    h1{font-size:clamp(50px,7.2vw,100px);line-height:.94;letter-spacing:-.065em;max-width:850px}.hero h1 span{color:var(--muted)}
+    .hero-copy{font-size:18px;color:var(--soft);max-width:680px;margin:28px 0 30px}.hero-copy strong{color:var(--text)}
+    .cta-row{display:flex;flex-wrap:wrap;gap:12px}.btn{display:inline-flex;align-items:center;gap:9px;padding:13px 17px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:700;transition:transform .2s,border-color .2s,background .2s}.btn:hover{transform:translateY(-2px);border-color:#4a4a4a}.btn.primary{background:var(--accent);border-color:var(--accent);color:#0b0b0b}.btn.secondary{background:#101010}
+    .hero-art{position:relative;min-height:520px;display:grid;place-items:center}.orb{position:absolute;width:360px;height:360px;border-radius:50%;border:1px solid #2b2b2b;transform:rotate(26deg);box-shadow:0 0 90px rgba(215,255,79,.05) inset}.orb:before,.orb:after{content:"";position:absolute;inset:22px;border-radius:50%;border:1px dashed #333}.orb:after{inset:75px;border-color:#3d4528}.node{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 20px rgba(215,255,79,.5)}.node.a{top:19%;left:62%}.node.b{top:47%;left:17%;width:8px;height:8px;background:var(--accent-2)}.node.c{bottom:19%;right:21%;width:7px;height:7px}.node.d{top:34%;right:9%;width:6px;height:6px;background:#fff}.link{position:absolute;height:1px;background:linear-gradient(90deg,transparent,#3b3b3b,transparent);transform-origin:left center}.link.l1{width:270px;top:30%;left:32%;transform:rotate(19deg)}.link.l2{width:220px;top:49%;left:25%;transform:rotate(-31deg)}.link.l3{width:260px;top:57%;left:39%;transform:rotate(36deg)}.link.l4{width:200px;top:42%;left:44%;transform:rotate(-54deg)}.signal{position:absolute;right:0;top:10%;width:230px;padding:16px;border:1px solid var(--line);background:rgba(14,14,14,.86);border-radius:16px;backdrop-filter:blur(10px);font-size:12px;color:var(--soft);box-shadow:0 20px 60px rgba(0,0,0,.35)}.signal b{display:block;color:var(--text);margin-bottom:7px}.signal .bar{height:6px;background:#1d1d1d;border-radius:99px;margin-top:10px;overflow:hidden}.signal .bar i{display:block;width:82%;height:100%;background:var(--accent);border-radius:99px}
+    .proof-strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 0}.proof-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:0}.proof{padding:4px 22px;border-right:1px solid var(--line)}.proof:first-child{padding-left:0}.proof:last-child{border-right:0}.proof strong{display:block;font-size:20px;letter-spacing:-.03em}.proof span{display:block;color:var(--muted);font:10px var(--mono);text-transform:uppercase;letter-spacing:.08em;margin-top:5px}
+    section{padding:110px 0;border-bottom:1px solid var(--line)}
+    .section-head{display:grid;grid-template-columns:.55fr 1fr;gap:50px;margin-bottom:42px}.kicker{font:500 11px var(--mono);color:var(--accent);letter-spacing:.14em;text-transform:uppercase}.section-title{font-size:clamp(34px,4.5vw,62px);line-height:1.02;letter-spacing:-.045em}.section-intro{max-width:690px;color:var(--muted);font-size:16px;margin-top:12px}
+    .feature-grid{display:grid;gap:20px}.project-card{display:grid;grid-template-columns:1.1fr .9fr;gap:0;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:linear-gradient(135deg,#111 0%,#0b0b0b 68%);transition:.25s}.project-card:hover{border-color:#3b3b3b;transform:translateY(-3px)}.project-body{padding:34px}.project-art{min-height:330px;position:relative;overflow:hidden;border-left:1px solid var(--line);background:radial-gradient(circle at 30% 30%,rgba(215,255,79,.1),transparent 25%),linear-gradient(145deg,#111,#0a0a0a)}.project-art .gridline{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:34px 34px;mask-image:linear-gradient(to bottom,black,transparent)}
+    .art-window{position:absolute;left:12%;top:17%;width:76%;height:66%;border:1px solid #333;border-radius:18px;background:rgba(12,12,12,.85);box-shadow:0 24px 60px rgba(0,0,0,.5);padding:18px}.art-window .top{display:flex;gap:6px;margin-bottom:20px}.art-window .top i{width:6px;height:6px;border-radius:50%;background:#555}.art-row{display:flex;gap:9px;align-items:center;margin:12px 0}.art-row span{height:7px;border-radius:5px;background:#292929;display:block}.art-row .s1{width:34%}.art-row .s2{width:58%}.art-row .s3{width:20%}.art-chip{position:absolute;right:10%;bottom:12%;padding:10px 12px;border:1px solid #364126;background:rgba(215,255,79,.08);color:var(--accent);border-radius:10px;font:10px var(--mono)}
+    .project-card:nth-child(2) .project-art{background:radial-gradient(circle at 75% 25%,rgba(125,240,191,.1),transparent 25%),linear-gradient(145deg,#111,#0a0a0a)}
+    .project-card:nth-child(3) .project-art{background:radial-gradient(circle at 55% 60%,rgba(255,255,255,.06),transparent 28%),linear-gradient(145deg,#101010,#080808)}
+    .project-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.tag{border:1px solid #2a2a2a;border-radius:999px;padding:6px 9px;font:10px var(--mono);color:var(--muted)}.tag.live{color:var(--accent);border-color:#3d4823;background:rgba(215,255,79,.06)}
+    .project-title{font-size:34px;line-height:1.05;letter-spacing:-.04em}.project-sub{margin-top:10px;color:var(--muted);font-size:14px}.project-text{margin-top:18px;color:var(--soft);font-size:15px;max-width:650px}.project-links{display:flex;gap:9px;flex-wrap:wrap;margin-top:24px}
+    .text-link{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--text);padding-bottom:4px;border-bottom:1px solid #4c4c4c}.text-link:hover{color:var(--accent);border-color:var(--accent)}
+    .insight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:20px}.insight{padding:25px;border:1px solid var(--line);border-radius:18px;background:#0c0c0c}.insight-num{font:11px var(--mono);color:var(--accent)}.insight h3{font-size:19px;margin:19px 0 8px;letter-spacing:-.03em}.insight p{color:var(--muted);font-size:13px}
+    .other-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.other-card{border:1px solid var(--line);padding:25px;border-radius:18px;background:#0c0c0c}.other-card h3{font-size:21px;letter-spacing:-.03em}.other-card p{color:var(--muted);font-size:13px;margin-top:9px}.stack{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px}.pill{padding:6px 9px;border:1px solid #262626;border-radius:999px;color:#aaa;font:10px var(--mono)}
+    .experience-list{border-top:1px solid var(--line)}.exp{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;padding:30px 0;border-bottom:1px solid var(--line)}.exp-date{color:var(--muted);font:11px var(--mono)}.exp-role{font-size:28px;letter-spacing:-.03em;margin-top:6px}.exp-org{color:var(--accent);font-size:14px;margin-top:5px}.exp p{font-size:14px;color:var(--soft);margin-top:8px}.exp ul{padding-left:18px;color:var(--muted);font-size:13px;margin-top:12px}.exp li{margin:6px 0}
+    .profile-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:60px;align-items:start}.photo-wrap{position:sticky;top:110px}.photo{width:180px;aspect-ratio:1;border-radius:22px;object-fit:cover;filter:grayscale(1);border:1px solid var(--line)}.profile-note{margin-top:18px;color:var(--muted);font:11px var(--mono);max-width:220px}.about-copy{font-size:18px;line-height:1.7;max-width:780px}.about-copy strong{color:var(--text)}.about-copy p+p{margin-top:20px}.work-method{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:36px}.step{padding:15px 12px;border:1px solid var(--line);border-radius:14px;background:#0c0c0c;min-height:106px}.step b{font:10px var(--mono);color:var(--accent)}.step span{display:block;font-size:12px;color:var(--soft);margin-top:20px}
+    .skill-layout{display:grid;grid-template-columns:1fr 1fr;gap:18px}.skill-block{border:1px solid var(--line);border-radius:18px;padding:25px;background:#0c0c0c}.skill-block h3{font-size:16px}.skill-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:17px}.skill-list span{padding:8px 10px;border:1px solid #272727;border-radius:10px;color:var(--soft);font-size:12px}
+    .cred-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.cred{border:1px solid var(--line);border-radius:18px;padding:26px;background:linear-gradient(145deg,#101010,#0b0b0b)}.cred b{display:block;font-size:24px;letter-spacing:-.04em}.cred p{color:var(--muted);font-size:13px;margin-top:8px}.cred .mono{color:var(--accent);font:10px var(--mono);text-transform:uppercase;letter-spacing:.1em}
+    .contact{padding:120px 0 90px}.contact-card{display:grid;grid-template-columns:1fr auto;gap:30px;align-items:end;padding:45px;border:1px solid var(--line);border-radius:28px;background:radial-gradient(circle at 80% 10%,rgba(215,255,79,.08),transparent 30%),#0c0c0c}.contact-card h2{font-size:clamp(42px,6vw,76px);line-height:.98;letter-spacing:-.055em;max-width:800px}.contact-card p{color:var(--muted);max-width:640px;margin-top:18px}.contact-links{display:flex;flex-direction:column;gap:10px;min-width:230px}.contact-links a{padding:13px 15px;border:1px solid var(--line);border-radius:12px;font-size:12px}.contact-links a:hover{border-color:#444;color:var(--accent)}
+    footer{padding:25px 0 35px;color:#70706d;font-size:11px}.footer-inner{display:flex;justify-content:space-between;gap:20px}.footer-links{display:flex;gap:16px}.footer-links a:hover{color:var(--text)}
+    .reveal{opacity:0;transform:translateY(18px);transition:opacity .65s ease,transform .65s ease}.reveal.visible{opacity:1;transform:none}
+    @media(max-width:900px){.hero{grid-template-columns:1fr;gap:20px;min-height:auto;padding-top:70px}.hero-art{min-height:360px}.signal{right:4%}.proof-grid{grid-template-columns:repeat(2,1fr)}.proof{border-bottom:1px solid var(--line);padding:15px}.proof:nth-child(odd){padding-left:0}.proof:nth-child(even){border-right:0}.section-head{grid-template-columns:1fr;gap:14px}.project-card{grid-template-columns:1fr}.project-art{border-left:0;border-top:1px solid var(--line)}.insight-grid{grid-template-columns:1fr}.other-grid,.skill-layout,.cred-grid{grid-template-columns:1fr}.exp{grid-template-columns:1fr;gap:10px}.profile-grid{grid-template-columns:1fr}.photo-wrap{position:static}.work-method{grid-template-columns:repeat(3,1fr)}.contact-card{grid-template-columns:1fr}.nav-links{display:none}.menu{display:block}.nav.mobile-open .nav-links{display:flex;position:absolute;top:72px;left:0;right:0;background:#090909;border-bottom:1px solid var(--line);padding:18px 20px;flex-direction:column;align-items:flex-start}.nav.mobile-open .nav-actions{display:none}}
+    @media(max-width:560px){.shell{width:min(var(--max),calc(100% - 28px))}.nav-inner{height:64px}.nav.mobile-open .nav-links{top:64px}.hero{padding:55px 0 65px}h1{font-size:50px}.hero-copy{font-size:16px}.hero-art{min-height:300px}.orb{width:250px;height:250px}.signal{width:195px;font-size:11px;top:0}.project-body{padding:24px}.project-title{font-size:29px}.project-art{min-height:250px}.work-method{grid-template-columns:repeat(2,1fr)}.contact{padding-top:80px}.contact-card{padding:28px}.footer-inner{flex-direction:column}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}.btn,.project-card{transition:none}}
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="nav" id="topbar">
+    <div class="shell nav-inner">
+      <a class="brand" href="#top" aria-label="Prakash Chand Jain home">PCJ<span>.</span></a>
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="#work">Work</a><a href="#experience">Experience</a><a href="#about">About</a><a href="#skills">Skills</a><a href="#achievements">Achievements</a><a href="#contact">Contact</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="icon-link" href="https://github.com/Prakash-codeMaker" target="_blank" rel="noreferrer">GitHub ↗</a>
+        <a class="resume-link" href="mailto:jainprakashchand954@gmail.com?subject=Resume%20request%20-%20Prakash%20Chand%20Jain">Resume</a>
+        <button class="menu" id="menu" aria-label="Open navigation" aria-expanded="false">Menu</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="shell hero reveal" id="top">
+      <div>
+        <div class="eyebrow"><i class="dot"></i>Software & AI Engineer · Pune, India</div>
+        <h1>I build systems for problems that <span>don't come with clean specifications.</span></h1>
+        <p class="hero-copy">I work across <strong>AI systems, backend engineering, research, automation, and product</strong> — from multi-agent pipelines and safety evaluation to robotics data research and workflow systems.</p>
+        <div class="cta-row">
+          <a class="btn primary" href="#work">Explore selected work ↓</a>
+          <a class="btn secondary" href="mailto:jainprakashchand954@gmail.com">jainprakashchand954@gmail.com ↗</a>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="orb"></div><div class="node a"></div><div class="node b"></div><div class="node c"></div><div class="node d"></div>
+        <div class="link l1"></div><div class="link l2"></div><div class="link l3"></div><div class="link l4"></div>
+        <div class="signal"><b>System state</b>Interpret → structure → verify → act.<div class="bar"><i></i></div></div>
+      </div>
+    </section>
+
+    <div class="proof-strip">
+      <div class="shell proof-grid">
+        <div class="proof"><strong>9.74 / 10</strong><span>GPA · B.Tech IT</span></div>
+        <div class="proof"><strong>2,000+</strong><span>GAINN signups</span></div>
+        <div class="proof"><strong>1,000+</strong><span>StoryLens signups</span></div>
+        <div class="proof"><strong>40%</strong><span>Manual effort reduced</span></div>
+        <div class="proof"><strong>85%</strong><span>Safety evaluator detection</span></div>
+      </div>
+    </div>
+
+    <section id="work">
+      <div class="shell">
+        <div class="section-head reveal"><div class="kicker">01 / Selected work</div><div><div class="section-title">Build the system,<br>not just the demo.</div><p class="section-intro">The projects below are the strongest evidence of how I think: break ambiguous problems into systems, separate unreliable components from deterministic authority, and ship something people can actually use.</p></div></div>
+        <div class="feature-grid">
+          <article class="project-card reveal">
+            <div class="project-body">
+              <div class="project-meta"><span class="tag live">LIVE · 2,000+ SIGNUPS</span><span class="tag">MULTI-AGENT</span><span class="tag">NEWS INTELLIGENCE</span></div>
+              <h3 class="project-title">GAINN</h3><p class="project-sub">A multi-agent AI news pipeline built around research, drafting, and quality control.</p>
+              <p class="project-text">Designed and shipped the system as separate drafting and QC agent workflows rather than one opaque generation loop. The goal was not simply to generate more text — it was to make the pipeline more reliable and improve factual consistency before publishing.</p>
+              <div class="project-links"><span class="text-link">AI orchestration</span><span class="text-link">Quality control</span><span class="text-link">Live product</span></div>
+            </div>
+            <div class="project-art" aria-hidden="true"><div class="gridline"></div><div class="art-window"><div class="top"><i></i><i></i><i></i></div><div class="art-row"><span class="s1"></span><span class="s2"></span></div><div class="art-row"><span class="s3"></span><span class="s2"></span></div><div class="art-row"><span class="s1"></span><span class="s2"></span></div><div class="art-row"><span class="s1"></span><span class="s3"></span></div></div><div class="art-chip">QC PASS → PUBLISH</div></div>
+          </article>
+
+          <article class="project-card reveal">
+            <div class="project-body">
+              <div class="project-meta"><span class="tag live">LIVE · 1,000+ SIGNUPS</span><span class="tag">RESEARCH PIPELINE</span><span class="tag">VIDEO</span></div>
+              <h3 class="project-title">StoryLens</h3><p class="project-sub">An AI research-to-video pipeline that turns messy information into verified narrative.</p>
+              <p class="project-text">Built an end-to-end workflow that researches a topic, cross-verifies sources, identifies key entities, structures findings into a narrative, then generates a script and animated video. The system treats retrieval, verification, and synthesis as separate stages.</p>
+              <div class="project-links"><span class="text-link">Retrieval</span><span class="text-link">Cross-verification</span><span class="text-link">Narrative synthesis</span></div>
+            </div>
+            <div class="project-art" aria-hidden="true"><div class="gridline"></div><div class="art-window"><div class="top"><i></i><i></i><i></i></div><div class="art-row"><span class="s2"></span><span class="s1"></span></div><div class="art-row"><span class="s1"></span><span class="s2"></span></div><div class="art-row"><span class="s3"></span><span class="s2"></span></div><div class="art-row"><span class="s2"></span><span class="s1"></span></div></div><div class="art-chip">SOURCES → STORY</div></div>
+          </article>
+
+          <article class="project-card reveal">
+            <div class="project-body">
+              <div class="project-meta"><span class="tag">SYSTEM DESIGN</span><span class="tag">AI + DETERMINISTIC</span><span class="tag">PAYMENTS</span></div>
+              <h3 class="project-title">RecoverIT</h3><p class="project-sub">An AI-assisted payment recovery workflow for ambiguous failed-payment cases.</p>
+              <p class="project-text">Designed as a persistent case pipeline: report → evidence → verify → investigate → recovery route → approval → external action → monitor → resolve. AI interprets and extracts evidence; deterministic workflow state controls consequential actions; humans approve high-risk changes.</p>
+              <div class="project-links"><span class="text-link">Safety boundaries</span><span class="text-link">Workflow ledger</span><span class="text-link">Reliability</span></div>
+            </div>
+            <div class="project-art" aria-hidden="true"><div class="gridline"></div><div class="art-window"><div class="top"><i></i><i></i><i></i></div><div class="art-row"><span class="s1"></span><span class="s2"></span></div><div class="art-row"><span class="s1"></span><span class="s3"></span></div><div class="art-row"><span class="s2"></span><span class="s2"></span></div><div class="art-row"><span class="s3"></span><span class="s1"></span></div></div><div class="art-chip">ACTION LEDGER · VERIFY</div></div>
+          </article>
+        </div>
+
+        <div class="section-head reveal" style="margin-top:90px;margin-bottom:22px"><div class="kicker">What these taught me</div><div><div class="section-title" style="font-size:clamp(28px,3.4vw,46px)">The interesting part is usually the constraint.</div></div></div>
+        <div class="insight-grid">
+          <div class="insight reveal"><div class="insight-num">01</div><h3>Generation is not usefulness.</h3><p>GAINN pushed me toward explicit research and QC stages instead of trusting a single generative pass.</p></div>
+          <div class="insight reveal"><div class="insight-num">02</div><h3>Research needs structure.</h3><p>StoryLens separates source gathering, cross-verification, entity extraction, and narrative synthesis.</p></div>
+          <div class="insight reveal"><div class="insight-num">03</div><h3>AI should not own authority.</h3><p>RecoverIT separates probabilistic interpretation from deterministic workflow authority and human approval.</p></div>
+        </div>
+
+        <div class="other-grid" style="margin-top:20px">
+          <article class="other-card reveal"><div class="kicker">Other work</div><h3 style="margin-top:12px">LLM Safety Evaluator</h3><p>Automated red-teaming and evaluation with LLM-as-a-Judge across GPT, Claude, DeepSeek, and Gemini; FastAPI backend, Streamlit frontend, LiteLLM routing, PDF compliance reports.</p><div class="stack"><span class="pill">85% detection accuracy</span><span class="pill">FastAPI</span><span class="pill">LiteLLM</span><span class="pill">Red teaming</span></div></article>
+          <article class="other-card reveal"><div class="kicker">Other work</div><h3 style="margin-top:12px">Anomaly Detection in Simulated LHC Data</h3><p>Autoencoder + Isolation Forest ensemble across 100,000+ simulated samples with a React/TypeScript dashboard for inspecting and triaging anomalies.</p><div class="stack"><span class="pill">100k+ samples</span><span class="pill">PyTorch</span><span class="pill">scikit-learn</span><span class="pill">React / TS</span></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience">
+      <div class="shell">
+        <div class="section-head reveal"><div class="kicker">02 / Experience</div><div><div class="section-title">Research when the problem is new. Engineering when it has to work.</div><p class="section-intro">I like the boundary between investigation and implementation — where the work starts uncertain and ends as a system, method, or shipped result.</p></div></div>
+        <div class="experience-list">
+          <article class="exp reveal"><div><div class="exp-date">DEC 2025 — JAN 2026</div><div class="exp-role">Research Intern</div><div class="exp-org">IDSIA / SUPSI · Supervisor: Paolo Franceschi</div></div><div><p>Worked on training-data quality for imitation learning and Vision-Language-Action (VLA) models.</p><ul><li>Researched data collection and augmentation methods for robot-learning pipelines.</li><li>Investigated approaches to improve quality and diversity of multimodal learning-from-demonstration data.</li></ul></div></article>
+          <article class="exp reveal"><div><div class="exp-date">FEB 2025 — MAY 2025</div><div class="exp-role">Penetration Tester</div><div class="exp-org">Ceeras Pvt. Ltd.</div></div><div><p>Conducted security assessments across internal and web systems while automating repeatable testing workflows.</p><ul><li>Reduced manual testing effort by 40% through workflow automation.</li><li>Worked across application and security assessment tasks rather than a single narrow testing surface.</li></ul></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="shell">
+        <div class="section-head reveal"><div class="kicker">03 / About</div><div><div class="section-title">A technical generalist with a systems bias.</div></div></div>
+        <div class="profile-grid">
+          <div class="photo-wrap reveal"><img class="photo" src="photo.png.jpg" alt="Portrait of Prakash Chand Jain"><div class="profile-note">B.Tech Information Technology · BVCOE Pune · GPA 9.74 / 10</div></div>
+          <div class="about-copy reveal">
+            <p>I’m <strong>Prakash Chand Jain</strong>, a software and AI engineer who enjoys building where the requirements are incomplete, the data is messy, and the obvious solution is usually not enough.</p>
+            <p>My work spans <strong>AI orchestration, backend/application engineering, research, security, and product design</strong>. I’ve shipped live AI products, built evaluation infrastructure, researched robot-learning data, and automated security workflows.</p>
+            <p>I care about the layer underneath the interface: what happens when the model is wrong, the provider times out, the state conflicts, or a user needs a system to keep working after they leave the page.</p>
+            <div class="work-method">
+              <div class="step"><b>01</b><span>Start with the problem</span></div><div class="step"><b>02</b><span>Question the default solution</span></div><div class="step"><b>03</b><span>Find the right abstraction</span></div><div class="step"><b>04</b><span>Build the smallest useful system</span></div><div class="step"><b>05</b><span>Test failure modes</span></div><div class="step"><b>06</b><span>Ship and iterate</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="shell">
+        <div class="section-head reveal"><div class="kicker">04 / Skills</div><div><div class="section-title">A broad stack, anchored in fundamentals.</div><p class="section-intro">I prefer learning enough of a tool to solve the problem properly, rather than collecting technologies for the sake of a list.</p></div></div>
+        <div class="skill-layout">
+          <div class="skill-block reveal"><h3>Languages</h3><div class="skill-list"><span>Python</span><span>C++</span><span>Java</span><span>TypeScript</span><span>JavaScript</span></div></div>
+          <div class="skill-block reveal"><h3>AI / ML</h3><div class="skill-list"><span>PyTorch</span><span>scikit-learn</span><span>LLM-as-a-Judge</span><span>Multi-agent systems</span><span>Anomaly detection</span><span>Adversarial prompt testing</span></div></div>
+          <div class="skill-block reveal"><h3>Engineering</h3><div class="skill-list"><span>FastAPI</span><span>REST APIs</span><span>React</span><span>TypeScript</span><span>Docker</span><span>Linux</span><span>Git</span><span>LiteLLM</span></div></div>
+          <div class="skill-block reveal"><h3>Data</h3><div class="skill-list"><span>NumPy</span><span>pandas</span><span>Statistical modeling</span><span>Data pipelines</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="achievements">
+      <div class="shell">
+        <div class="section-head reveal"><div class="kicker">05 / Achievements & education</div><div><div class="section-title">Proof points, without the noise.</div></div></div>
+        <div class="cred-grid">
+          <div class="cred reveal"><div class="mono">Hackathon</div><b>Top 50 / ~250,000</b><p>ET GenAI Hackathon — approximately top 0.02% of participants.</p></div>
+          <div class="cred reveal"><div class="mono">Selected delegate</div><b>HPAIR</b><p>Selected delegate for the Harvard Project for Asian and International Relations.</p></div>
+          <div class="cred reveal"><div class="mono">Education</div><b>9.74 / 10.0 GPA</b><p>B.Tech, Information Technology · Bharati Vidyapeeth (Deemed to be University) College of Engineering, Pune.</p></div>
+          <div class="cred reveal"><div class="mono">Current profile</div><b>Software & AI Engineer</b><p>Building product-grade AI systems, automation workflows, and research-driven engineering projects.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="contact">
+      <div class="shell">
+        <div class="contact-card reveal">
+          <div><div class="kicker">06 / Contact</div><h2>Have a difficult problem?</h2><p>I’m most useful where the problem isn’t fully specified yet — especially when it needs research, system design, AI, and a working product to meet in the middle.</p></div>
+          <div class="contact-links">
+            <a href="mailto:jainprakashchand954@gmail.com">Email · jainprakashchand954@gmail.com</a>
+            <a href="https://github.com/Prakash-codeMaker" target="_blank" rel="noreferrer">GitHub · Prakash-codeMaker ↗</a>
+            <a href="https://www.linkedin.com/in/prakash-chand-jain-coder015675328" target="_blank" rel="noreferrer">LinkedIn ↗</a>
+            <a href="https://leetcode.com/u/Prakashchandjain/" target="_blank" rel="noreferrer">LeetCode ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer-inner"><div>© 2026 Prakash Chand Jain · Built as a portfolio, not a template.</div><div class="footer-links"><a href="#top">Back to top ↑</a><a href="mailto:jainprakashchand954@gmail.com">Email</a><a href="https://github.com/Prakash-codeMaker" target="_blank" rel="noreferrer">GitHub</a></div></div>
+  </footer>
+
+  <script>
+    const nav=document.getElementById('topbar');
+    const menu=document.getElementById('menu');
+    menu.addEventListener('click',()=>{const open=nav.classList.toggle('mobile-open');menu.setAttribute('aria-expanded',String(open));});
+    document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>{nav.classList.remove('mobile-open');menu.setAttribute('aria-expanded','false')}));
+    const io=new IntersectionObserver((entries)=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.12});
+    document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(Math.min(i%5,4)*70)+'ms';io.observe(el)});
+  </script>
+</body>
+</html>
