@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090b0b">
+<meta name="description" content="FleetScope is an independent telemetry reliability lab built by Prakash Chand Jain. Explore how freshness, retries, replay conflicts, offset gaps and signal cadence can be measured with reproducible synthetic fleet events.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FleetScope — What does it take to trust a vehicle signal?">
+<meta property="og:description" content="An independent engineering case study on telemetry freshness, retries, replay integrity and fleet data quality. Built with reproducible synthetic data.">
+<meta property="og:url" content="https://pcj-portfolio.vercel.app/fleetscope.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="FleetScope — Telemetry Reliability Lab">
+<meta name="twitter:description" content="An independent engineering case study by Prakash Chand Jain.">
+<link rel="canonical" href="https://pcj-portfolio.vercel.app/fleetscope.html">
+<title>FleetScope — Telemetry Reliability Engineering | Prakash Chand Jain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"TechArticle","headline":"FleetScope: What does it take to trust a vehicle signal?","description":"An independent, reproducible telemetry reliability engineering case study using synthetic events.","author":{"@type":"Person","name":"Prakash Chand Jain","url":"https://pcj-portfolio.vercel.app/"},"datePublished":"2026-11-19","about":["telemetry reliability","data quality","event freshness","distributed data systems"],"isAccessibleForFree":true,"mainEntityOfPage":"https://pcj-portfolio.vercel.app/fleetscope.html"}
+</script>
+<style>
+:root{--bg:#090b0b;--panel:#101414;--panel2:#141a18;--text:#f2f3ed;--muted:#a5aaa2;--line:rgba(255,255,255,.1);--acid:#d7ff46;--mint:#7ff0c5;--sans:'Instrument Sans',system-ui,sans-serif;--display:'Space Grotesk',sans-serif;--mono:'DM Mono',monospace}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(60rem 38rem at 78% -8%,rgba(127,240,197,.09),transparent 60%),var(--bg);color:var(--text);font:16px/1.68 var(--sans)}a{color:inherit;text-decoration:none}.wrap{width:min(1040px,calc(100% - 42px));margin:auto}.nav{height:66px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}.brand{font:700 14px var(--display);letter-spacing:-.04em}.brand span{color:var(--acid)}.nav a:last-child{font-size:12px;color:var(--muted)}.eyebrow{font:500 10px var(--mono);letter-spacing:.15em;text-transform:uppercase;color:var(--acid)}.hero{padding:90px 0 54px}.hero h1{font:500 clamp(43px,7vw,78px)/.99 var(--display);letter-spacing:-.065em;max-width:850px;margin:20px 0}.hero p{font-size:18px;line-height:1.55;color:#c3c8bf;max-width:740px}.boundary{margin-top:25px;padding:14px 17px;border:1px solid rgba(215,255,70,.22);border-radius:13px;background:rgba(215,255,70,.035);font-size:12px;color:#c5c9bd}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:27px}.btn{display:inline-flex;padding:11px 16px;border-radius:999px;border:1px solid var(--line);font-size:12px;color:#e5e8df}.btn.primary{background:var(--acid);color:#111;border-color:var(--acid);font-weight:700}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:30px 0 8px}.stat{border:1px solid var(--line);border-radius:14px;padding:17px;background:rgba(255,255,255,.018)}.stat b{display:block;font:500 27px var(--display);letter-spacing:-.05em}.stat span{font-size:11px;color:var(--muted)}main{padding-bottom:80px}.section{padding:46px 0;border-top:1px solid var(--line)}.section h2{font:500 clamp(27px,4vw,42px)/1.1 var(--display);letter-spacing:-.05em;margin:0 0 20px}.section p{max-width:790px;color:#c4c8c0}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:20px}.card{padding:20px;border:1px solid var(--line);border-radius:15px;background:linear-gradient(145deg,rgba(255,255,255,.025),rgba(255,255,255,.008))}.card h3{font:500 17px var(--display);margin:0 0 8px}.card p{font-size:13px;color:var(--muted);margin:0}.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:24px 0}.step{padding:13px 10px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-size:11px;color:#d2d8cd}.step small{display:block;color:var(--acid);font:10px var(--mono);margin-bottom:7px}.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;margin:20px 0}.table{width:100%;border-collapse:collapse;min-width:600px;font-size:12px}.table th,.table td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line)}.table th{font:500 10px var(--mono);letter-spacing:.06em;color:var(--acid);text-transform:uppercase;background:rgba(255,255,255,.025)}.table td{color:#d0d5cc}.table tr:last-child td{border-bottom:0}.note{padding:15px 17px;border-left:2px solid var(--mint);background:rgba(127,240,197,.04);font-size:12px;color:#c8cec5;margin:20px 0}.code{padding:17px;border:1px solid var(--line);border-radius:12px;background:#070909;overflow:auto;color:#c9dbca;font:12px/1.65 var(--mono)}.end{padding:30px;border:1px solid rgba(215,255,70,.2);border-radius:18px;background:radial-gradient(circle at 90% 10%,rgba(215,255,70,.08),transparent 45%),var(--panel)}.end h2{margin-top:0}.end p{font-size:14px;color:var(--muted)}.foot{padding:28px 0 45px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-size:11px;color:var(--muted)}.foot a{color:var(--acid)}
+@media(max-width:720px){.hero{padding:58px 0 35px}.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.step{display:flex;gap:13px;align-items:center}.step small{margin:0;min-width:38px}.hero p{font-size:16px}.section{padding:35px 0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="nav"><a class="brand" href="https://pcj-portfolio.vercel.app/">PCJ<span>.</span></a><a href="https://pcj-portfolio.vercel.app/">← Back to portfolio</a></header>
+<section class="hero">
+<div class="eyebrow">Independent engineering note · 19 November 2026</div>
+<h1>What does it take to trust a vehicle signal?</h1>
+<p>A fleet dashboard can look healthy while individual events are late, replayed, duplicated or unexpectedly silent. FleetScope is my attempt to make those failure modes visible—and to be precise about what the data can and cannot prove.</p>
+<div class="boundary"><strong>Scope:</strong> FleetScope is an independent prototype built entirely with synthetic data. It is not affiliated with Tesla, does not connect to Tesla systems or vehicles, and makes no claims about Tesla's internal architecture or production telemetry.</div>
+<div class="actions"><a class="btn primary" href="https://fleetscope-telemetry-lab.vercel.app/" target="_blank" rel="noopener noreferrer">Open live scenario showcase ↗</a><a class="btn" href="https://pcj-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer">View portfolio ↗</a><a class="btn" href="mailto:p9340297@gmail.com?subject=FleetScope%20technical%20discussion">Contact me ↗</a></div>
+<div class="stats">
+<div class="stat"><b>50,906</b><span>synthetic records in largest scale check</span></div>
+<div class="stat"><b>13.09s</b><span>local generation + batch analysis</span></div>
+<div class="stat"><b>95.68%</b><span>local line coverage, 30 tests</span></div>
+<div class="stat"><b>3</b><span>reproducible scenario profiles</span></div>
+</div>
+</section>
+<main>
+<section class="section">
+<div class="eyebrow">01 / The engineering question</div>
+<h2>“Did the event arrive?” is not the same as “Can I trust this signal?”</h2>
+<p>For systems that collect events from many devices, a single ingestion-success metric is not enough to explain data quality. A pipeline can accept an event that arrived late. A retry can look like a new observation. A repeated value can be a valid heartbeat. An offset gap can be worth investigating without proving that data was lost.</p>
+<p>I built FleetScope as a small, reproducible lab to separate these cases instead of collapsing them into one health score.</p>
+</section>
+<section class="section">
+<div class="eyebrow">02 / What it measures</div>
+<h2>Keep different failure modes different.</h2>
+<div class="grid">
+<div class="card"><h3>Freshness</h3><p>Measures event-to-ingestion delay using p50, p95, mean and maximum. Future-dated timestamps are isolated rather than silently treated as negative latency.</p></div>
+<div class="card"><h3>Retries and replay integrity</h3><p>Tracks explicit resend markers, duplicate event IDs and conflicting replays separately. A repeated value is not automatically classified as a retry.</p></div>
+<div class="card"><h3>Offset continuity</h3><p>Inspects observed topic/partition offset windows for gaps, repeated offsets and reordering. An observed gap is a diagnostic prompt—not proof of data loss.</p></div>
+<div class="card"><h3>Signal cadence</h3><p>Compares successive first-delivery observations with declared expected intervals to estimate missing emission slots. The result is explicitly an estimate, not a loss counter.</p></div>
+</div>
+</section>
+<section class="section">
+<div class="eyebrow">03 / System shape</div>
+<h2>A reproducible path from event generation to operator view.</h2>
+<div class="flow">
+<div class="step"><small>01</small>Deterministic simulator</div><div class="step"><small>02</small>Typed event validation</div><div class="step"><small>03</small>Batch analysis functions</div><div class="step"><small>04</small>SQLite run history</div><div class="step"><small>05</small>API, dashboard, CSV, metrics</div>
+</div>
+<p>The backend uses Python, Pydantic, FastAPI and SQLite. Event filtering, substring search and pagination are performed in SQL. Prometheus output stays at run-level to avoid high-cardinality vehicle and event labels. The browser UI is dependency-free HTML, CSS and JavaScript.</p>
+<pre class="code">event stream
+  → schema validation
+  → freshness / retry / replay analysis
+  → offset + cadence diagnostics
+  → SQLite persistence
+  → FastAPI + dashboard + CSV + Prometheus</pre>
+</section>
+<section class="section">
+<div class="eyebrow">04 / Reproducible scenarios</div>
+<h2>Same seed. Three different operating conditions.</h2>
+<p>The bundled scenarios use seed 23, 12 synthetic vehicle identifiers and 80 base events per identifier. The generator adds resend deliveries, so final accepted record counts are higher than the base-event count.</p>
+<div class="table-wrap"><table class="table">
+<thead><tr><th>Profile</th><th>Valid records</th><th>Resends</th><th>Late events</th><th>Offset gaps</th><th>Estimated missing samples</th></tr></thead>
+<tbody><tr><td>Clean</td><td>961</td><td>1</td><td>9</td><td>0</td><td>0</td></tr><tr><td>Balanced</td><td>981</td><td>33</td><td>91</td><td>7</td><td>11</td></tr><tr><td>Stress</td><td>1,001</td><td>78</td><td>253</td><td>19</td><td>28</td></tr></tbody>
+</table></div>
+<div class="note">These are outputs from a deterministic synthetic generator, not measurements from real vehicles or a production fleet. The estimated missing samples depend on declared cadence. They do not establish data loss.</div>
+</section>
+<section class="section">
+<div class="eyebrow">05 / Scale check and verification</div>
+<h2>Measure the prototype honestly.</h2>
+<p>The largest local microbenchmark generated and analysed 50,906 synthetic records in 13.0943 seconds, with 111.98 MiB of peak traced Python allocations. This was one run on Python 3.13.5 in a Linux environment. It is a scale check, not a statistically reliable latency estimate or a production-throughput claim.</p>
+<p>The local suite contains 30 tests and reports 95.68% line coverage. A real Uvicorn smoke run exercised the UI, API, event filters, CSV export, Prometheus endpoint and OpenAPI. A Python 3.10–3.13 CI matrix is configured, but remote CI results have not yet been used as evidence here.</p>
+</section>
+<section class="section">
+<div class="eyebrow">06 / What is deliberately not claimed</div>
+<h2>Clear boundaries are part of the engineering.</h2>
+<div class="grid">
+<div class="card"><h3>Batch, not streaming</h3><p>The current analyser processes event batches. It is not a bounded-state real-time streaming engine and does not claim end-to-end consumer lag.</p></div>
+<div class="card"><h3>No broker truth</h3><p>The prototype does not ingest broker high-water marks, committed consumer offsets or retention metadata. Offset gaps cannot prove missing messages.</p></div>
+<div class="card"><h3>No real fleet feed</h3><p>There is no Kafka cluster, distributed compute, vehicle connection, production service or Tesla data in this project.</p></div>
+<div class="card"><h3>Next technical steps</h3><p>A streaming analyser with checkpointing, broker metadata, per-signal data contracts, OpenTelemetry instrumentation and concurrent HTTP load tests would be meaningful extensions.</p></div>
+</div>
+</section>
+<section class="section">
+<div class="end">
+<div class="eyebrow">A note from the builder</div>
+<h2>I wanted to understand where a “healthy” pipeline can still mislead us.</h2>
+<p>FleetScope is a learning and engineering exercise—not a claim that the hard problems are solved. I’m interested in data infrastructure, telemetry reliability and systems where software decisions depend on the quality of incoming signals. Technical feedback and thoughtful collaboration are welcome.</p>
+<div class="actions"><a class="btn primary" href="mailto:p9340297@gmail.com?subject=FleetScope%20technical%20discussion">Email Prakash ↗</a><a class="btn" href="https://fleetscope-telemetry-lab.vercel.app/" target="_blank" rel="noopener noreferrer">Explore the demo ↗</a><a class="btn" href="https://www.linkedin.com/in/prakash-chand-jain-coder015675328" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a></div>
+</div>
+</section>
+</main>
+<footer class="foot"><span>© 2026 Prakash Chand Jain · Independent engineering work</span><a href="https://pcj-portfolio.vercel.app/">Main portfolio ↗</a></footer>
+</div>
+</body>
+</html>
