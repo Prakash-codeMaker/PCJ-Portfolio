@@ -1,0 +1,121 @@
+diff --git a/py/modal/cli/_download.py b/py/modal/cli/_download.py
+index 4c7fb6f..0000000 100644
+--- a/py/modal/cli/_download.py
++++ b/py/modal/cli/_download.py
+@@ -19,3 +19,38 @@ PIPE_PATH = Path("-")
+
+
++def _volume_entry_output_path(remote_path: str, local_destination: Path, entry: FileEntry) -> tuple[Path, bool]:
++    """Map a Volume listing entry to its local output path.
++
++    A file request may use a new local filename. A directory request always maps
++    entries relative to the requested remote directory, regardless of whether the
++    local destination existed before the download started.
++    """
++    requested_path = PurePosixPath(remote_path.lstrip("/"))
++    entry_path = PurePosixPath(entry.path.lstrip("/"))
++
++    if local_destination.exists() and not local_destination.is_dir() and not (
++        entry.type == FileEntryType.FILE and entry_path == requested_path
++    ):
++        raise UsageError(f"Local destination '{local_destination}' must be a directory for a remote directory")
++
++    if entry_path == requested_path and entry.type == FileEntryType.DIRECTORY:
++        return local_destination, True
++
++    if entry_path == requested_path and entry.type == FileEntryType.FILE:
++        if local_destination.is_dir():
++            return local_destination / entry_path.name, False
++        return local_destination, False
++
++    try:
++        relative_path = entry_path.relative_to(requested_path)
++    except ValueError:
++        raise UsageError(
++            f"Volume listing returned '{entry.path}' outside requested directory '{remote_path}'"
++        ) from None
++    if relative_path.is_absolute() or ".." in relative_path.parts:
++        raise UsageError(f"Volume listing returned an unsafe relative path: '{entry.path}'")
+
++    return local_destination / Path(relative_path.as_posix()), False
++
++
+ async def _volume_download(
+@@ -48,12 +77,18 @@ async def _volume_download(
+                 await q.put((None, entry))
+             else:
+-                start_path = Path(remote_path).parent.as_posix().split("*")[0]
+-                rel_path = PurePosixPath(entry.path).relative_to(start_path.lstrip("/"))
+-                if local_destination.is_dir():
+-                    output_path = local_destination / rel_path
++                is_volume_root_directory = False
++                if isinstance(volume, _Volume):
++                    output_path, is_volume_root_directory = _volume_entry_output_path(
++                        remote_path, local_destination, entry
++                    )
+                 else:
+-                    output_path = local_destination
+-                if output_path.exists():
++                    start_path = Path(remote_path).parent.as_posix().split("*")[0]
++                    rel_path = PurePosixPath(entry.path).relative_to(start_path.lstrip("/"))
++                    if local_destination.is_dir():
++                        output_path = local_destination / rel_path
++                    else:
++                        output_path = local_destination
++                if output_path.exists() and not is_volume_root_directory:
+                     if overwrite:
+                         if output_path.is_file():
+                             os.remove(output_path)
+@@ -64,4 +105,6 @@ async def _volume_download(
+                         raise UsageError(
+                             f"Output path '{output_path}' already exists. Use --force to overwrite the output directory"
+                         )
++                elif is_volume_root_directory and output_path.exists() and not output_path.is_dir():
++                    raise UsageError(f"Local destination '{output_path}' exists and is not a directory")
+                 await q.put((output_path, entry))
+
+
+diff --git a/py/test/volume_test.py b/py/test/volume_test.py
+index 694ea69..0000000 100644
+--- a/py/test/volume_test.py
++++ b/py/test/volume_test.py
+@@ -18,1 +18,2 @@ import modal
++from modal.cli._download import _volume_download
+ from modal._load_context import LoadContext
+@@ -355,3 +356,36 @@ async def test_volume_get(client, tmp_path, version, file_contents_size):
+     with pytest.raises(FileNotFoundError):
+         async for _ in vol.read_file.aio("/abc/def/i-dont-exist-at-all"):
+             ...
++
++
++@pytest.mark.asyncio
++async def test_volume_cli_get_directory_to_nonexistent_destination(client, tmp_path):
++    await modal.Volume.objects.create.aio(
++        "volume-get-directory-regression", client=client, version=api_pb2.VOLUME_FS_VERSION_V2
++    )
++    volume = await modal.Volume.from_name("volume-get-directory-regression").hydrate.aio(client=client)
++    (tmp_path / "a.txt").write_text("alpha\n")
++    (tmp_path / "b.txt").write_text("beta\n")
++
++    async with volume.batch_upload() as batch:
++        batch.put_file(tmp_path / "a.txt", "directory-repro/a.txt")
++        batch.put_file(tmp_path / "b.txt", "directory-repro/b.txt")
++
++    destination = tmp_path / "download"
++    assert not destination.exists()
++
++    def progress_cb(**kwargs):
++        return 1
++
++    await _volume_download(
++        volume=volume,
++        remote_path="directory-repro",
++        local_destination=destination,
++        overwrite=False,
++        progress_cb=progress_cb,
++        concurrency=2,
++    )
++
++    assert destination.is_dir()
++    assert (destination / "a.txt").read_text() == "alpha\n"
++    assert (destination / "b.txt").read_text() == "beta\n"
