@@ -6,6 +6,8 @@
 - Portfolio: https://pcj-portfolio.vercel.app/
 - Paid project brief: https://pcj-portfolio.vercel.app/start-a-project.html
 - RecoverIT engineering case study: https://pcj-portfolio.vercel.app/recoverit-case-study.html
+- RecoverIT long-form article: https://p9340297.wordpress.com/2026/11/20/recoverit-auditable-payment-recovery-workflow/
+- FleetScope long-form article: https://p9340297.wordpress.com/2026/11/20/fleetscope-reproducible-telemetry-reliability-lab/
 - GitHub: https://github.com/Prakash-codeMaker
 - LinkedIn: https://www.linkedin.com/in/prakash-chand-jain-coder015675328/
 
