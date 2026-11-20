@@ -1,0 +1,153 @@
+diff --git a/src/agents/models/chatcmpl_helpers.py b/src/agents/models/chatcmpl_helpers.py
+--- a/src/agents/models/chatcmpl_helpers.py
++++ b/src/agents/models/chatcmpl_helpers.py
+@@ -45,4 +45,20 @@
+     def is_openai(cls, client: AsyncOpenAI) -> bool:
+         return is_official_openai_client(client)
+ 
++    @classmethod
++    def content_filter_refusal_message(cls, finish_reason: Any) -> str | None:
++        """Return refusal text for standard and provider-qualified content-filter reasons."""
++        if not isinstance(finish_reason, str):
++            return None
++        if finish_reason != "content_filter" and not finish_reason.startswith("content_filter:"):
++            return None
++
++        reason = finish_reason.partition(":")[2].strip()
++        if reason:
++            return f"Response withheld by the provider's content filter ({reason})."
++        return "Response withheld by the provider's content filter."
++
+     @classmethod
+     def get_store_param(cls, client: AsyncOpenAI, model_settings: ModelSettings) -> bool | None:
+         # Match the behavior of Responses where store is True when not given
+         default_store = True if cls.is_openai(client) else None
+         return model_settings.store if model_settings.store is not None else default_store
+
+diff --git a/src/agents/models/openai_chatcompletions.py b/src/agents/models/openai_chatcompletions.py
+--- a/src/agents/models/openai_chatcompletions.py
++++ b/src/agents/models/openai_chatcompletions.py
+@@ -333,17 +333,18 @@
+-            if (
+-                message is not None
+-                and first_choice is not None
+-                and first_choice.finish_reason == "content_filter"
+-                and not message.content
+-                and not message.refusal
+-                and not message.tool_calls
+-            ):
+-                message.refusal = "Response withheld by the provider's content filter."
++            content_filter_refusal = ChatCmplHelpers.content_filter_refusal_message(
++                first_choice.finish_reason if first_choice is not None else None
++            )
++            if content_filter_refusal and (
++                message is None
++                or (not message.content and not message.refusal and not message.tool_calls)
++            ):
++                if message is None:
++                    message = ChatCompletionMessage(role="assistant", refusal=content_filter_refusal)
++                else:
++                    message.refusal = content_filter_refusal
+
+diff --git a/src/agents/models/chatcmpl_stream_handler.py b/src/agents/models/chatcmpl_stream_handler.py
+--- a/src/agents/models/chatcmpl_stream_handler.py
++++ b/src/agents/models/chatcmpl_stream_handler.py
+@@ -638,1 +638,2 @@
+         saw_content_filter = False
++        content_filter_refusal: str | None = None
+         saw_length = False
+         saw_finish_reason = False
+@@ -686,8 +687,10 @@
+             if choice.finish_reason is not None:
+                 saw_finish_reason = True
+-            if choice.finish_reason == "content_filter":
++            refusal_message = ChatCmplHelpers.content_filter_refusal_message(choice.finish_reason)
++            if refusal_message is not None:
+                 saw_content_filter = True
++                content_filter_refusal = refusal_message
+             elif choice.finish_reason == "length":
+                 saw_length = True
+
+@@ -1126,7 +1129,7 @@
+-            refusal_message = "Response withheld by the provider's content filter."
++            refusal_message = content_filter_refusal or "Response withheld by the provider's content filter."
+             state.refusal_content_index_and_output = (
+                 refusal_index,
+                 ResponseOutputRefusal(refusal=refusal_message, type="refusal"),
+             )
+
+diff --git a/src/agents/extensions/models/litellm_model.py b/src/agents/extensions/models/litellm_model.py
+--- a/src/agents/extensions/models/litellm_model.py
++++ b/src/agents/extensions/models/litellm_model.py
+@@ -345,17 +345,13 @@
+-            if (
+-                message is not None
+-                and first_choice is not None
+-                and getattr(first_choice, "finish_reason", None) == "content_filter"
+-                and not message.content
+-                and not getattr(message, "tool_calls", None)
+-            ):
++            refusal_message = ChatCmplHelpers.content_filter_refusal_message(
++                getattr(first_choice, "finish_reason", None) if first_choice is not None else None
++            )
++            if message is not None and refusal_message and not message.content and not getattr(message, "tool_calls", None):
+                 provider_specific_fields = getattr(message, "provider_specific_fields", None) or {}
+                 if not provider_specific_fields.get("refusal"):
+-                    provider_specific_fields["refusal"] = (
+-                        "Response withheld by the provider's content filter."
+-                    )
++                    provider_specific_fields["refusal"] = refusal_message
+                     message.provider_specific_fields = provider_specific_fields
+
+diff --git a/src/agents/extensions/models/any_llm_model.py b/src/agents/extensions/models/any_llm_model.py
+--- a/src/agents/extensions/models/any_llm_model.py
++++ b/src/agents/extensions/models/any_llm_model.py
+@@ -677,17 +677,14 @@
+-            if (
+-                message is not None
+-                and first_choice is not None
+-                and first_choice.finish_reason == "content_filter"
+-                and not message.content
+-                and not message.refusal
+-                and not message.tool_calls
+-            ):
+-                message.refusal = "Response withheld by the provider's content filter."
++            refusal_message = ChatCmplHelpers.content_filter_refusal_message(
++                first_choice.finish_reason if first_choice is not None else None
++            )
++            if refusal_message and (
++                message is None
++                or (not message.content and not message.refusal and not message.tool_calls)
++            ):
++                if message is None:
++                    message = ChatCompletionMessage(role="assistant", refusal=refusal_message)
++                else:
++                    message.refusal = refusal_message
+
+diff --git a/tests/models/test_openai_chatcompletions.py b/tests/models/test_openai_chatcompletions.py
+--- a/tests/models/test_openai_chatcompletions.py
++++ b/tests/models/test_openai_chatcompletions.py
+@@ -1410,2 +1410,2 @@
+-    """If the model returns no message, get_response should return an empty output."""
++    """A provider-qualified content-filter finish reason with no message becomes a refusal."""
+     msg = ChatCompletionMessage(role="assistant", content="ignored")
+-    choice = Choice(index=0, finish_reason="content_filter", message=msg)
++    choice = Choice(index=0, finish_reason="content_filter: OTHER", message=msg)
+     choice.message = None  # type: ignore[assignment]
+@@ -1432,1 +1432,7 @@
+-    assert resp.output == []
++    assert len(resp.output) == 1
++    assert isinstance(resp.output[0], ResponseOutputMessage)
++    refusal_part = resp.output[0].content[0]
++    assert isinstance(refusal_part, ResponseOutputRefusal)
++    assert refusal_part.refusal == "Response withheld by the provider's content filter (OTHER)."
+
+diff --git a/tests/models/test_openai_chatcompletions_stream.py b/tests/models/test_openai_chatcompletions_stream.py
+--- a/tests/models/test_openai_chatcompletions_stream.py
++++ b/tests/models/test_openai_chatcompletions_stream.py
+@@ -3630,1 +3630,1 @@
+-        choices=[Choice(index=0, delta=ChoiceDelta(), finish_reason="content_filter")],
++        choices=[Choice(index=0, delta=ChoiceDelta(), finish_reason="content_filter: OTHER")],
+@@ -3664,1 +3664,1 @@
+-    assert refusal_part.refusal
++    assert refusal_part.refusal == "Response withheld by the provider's content filter (OTHER)."

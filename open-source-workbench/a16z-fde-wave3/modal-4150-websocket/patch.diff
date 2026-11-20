@@ -1,0 +1,77 @@
+diff --git a/py/modal/_runtime/asgi.py b/py/modal/_runtime/asgi.py
+--- a/py/modal/_runtime/asgi.py
++++ b/py/modal/_runtime/asgi.py
+@@ -395,3 +395,21 @@
+         await asyncio.wait([send_response_task, disconnect_task], return_when=asyncio.FIRST_COMPLETED)
+ 
+ 
++def _websocket_proxy_headers(headers: list[tuple[bytes, bytes]]) -> list[tuple[str, str]]:
++    """Forward browser headers without advertising extensions the relay cannot negotiate."""
++    return [
++        (name.decode(), value.decode())
++        for name, value in headers
++        if name.lower() != b"sec-websocket-extensions"
++    ]
++
++
++def _websocket_error_close_message(close_code: int | None) -> dict[str, Any]:
++    """Translate an upstream WebSocket error into a safe ASGI close event."""
++    return {
++        "type": "websocket.close",
++        "code": close_code or 1011,
++        "reason": "Upstream WebSocket error",
++    }
++
++
+@@ -408,4 +426,4 @@
+     async with session.ws_connect(
+         url=path,
+-        headers=[(k.decode(), v.decode()) for k, v in scope["headers"]],  # type: ignore
++        headers=_websocket_proxy_headers(scope["headers"]),
+         protocols=scope.get("subprotocols", []),
+     ) as upstream_ws:
+@@ -442,4 +460,10 @@
+                 elif upstream_message.type == aiohttp.WSMsgType.binary:
+                     await send({"type": "websocket.send", "bytes": upstream_message.data})
++                elif upstream_message.type == aiohttp.WSMsgType.error:
++                    error = upstream_ws.exception()
++                    if error is not None:
++                        logger.warning("Upstream WebSocket relay error: %s", error)
++                    await send(_websocket_error_close_message(upstream_ws.close_code))
++                    break
+                 else:
+                     pass  # Ignore all other upstream WebSocket message types.
+ 
+diff --git a/py/test/web_server_proxy_test.py b/py/test/web_server_proxy_test.py
+--- a/py/test/web_server_proxy_test.py
++++ b/py/test/web_server_proxy_test.py
+@@ -146,3 +146,29 @@
+     }
+     res = modal._runtime.asgi._add_forwarded_for_header(original_scope)
+     assert res == expected_scope, res
++
++
++def test_websocket_proxy_headers_do_not_forward_unnegotiated_extensions():
++    headers = [
++        (b"host", b"example.test"),
++        (b"sec-websocket-extensions", b"permessage-deflate; client_max_window_bits"),
++        (b"cookie", b"session=abc"),
++        (b"SEC-WEBSOCKET-EXTENSIONS", b"x-webkit-deflate-frame"),
++    ]
++
++    assert modal._runtime.asgi._websocket_proxy_headers(headers) == [
++        ("host", "example.test"),
++        ("cookie", "session=abc"),
++    ]
++
++
++@pytest.mark.parametrize(
++    ("close_code", "expected_code"),
++    [(1002, 1002), (1011, 1011), (None, 1011)],
++)
++def test_websocket_proxy_error_close_message(close_code, expected_code):
++    assert modal._runtime.asgi._websocket_error_close_message(close_code) == {
++        "type": "websocket.close",
++        "code": expected_code,
++        "reason": "Upstream WebSocket error",
++    }
