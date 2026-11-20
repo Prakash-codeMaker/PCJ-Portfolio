@@ -1,0 +1,34 @@
+# Prakash Chand Jain — Engineering and paid project information
+
+> Independent engineering work across AI-enabled products, API integrations, backend systems, workflow automation and reliability engineering.
+
+## Primary pages
+- Portfolio: https://pcj-portfolio.vercel.app/
+- Paid project brief: https://pcj-portfolio.vercel.app/start-a-project.html
+- RecoverIT engineering case study: https://pcj-portfolio.vercel.app/recoverit-case-study.html
+- GitHub: https://github.com/Prakash-codeMaker
+- LinkedIn: https://www.linkedin.com/in/prakash-chand-jain-coder015675328/
+
+## Services available for scoped paid engagements
+- Node.js / Express and Python / FastAPI API integrations and backend workflows
+- AI workflow and evaluation tooling, reviewer consoles, task/rubric operations
+- Reliability engineering, automated testing, state transitions, idempotency and audit trails
+- Internal tools, proof-of-concept builds and technical investigations
+
+## Selected work and evidence
+- RecoverIT: AI-assisted payment recovery workflow with deterministic controls, human approval gates and 21/21 synthetic test-mode checks. https://github.com/Prakash-codeMaker/RecoverIT
+- TaskOps: AI data operations console with task intake, reviewer assignment, versioned rubrics, adjudication and audit history. Public showcase uses synthetic records. https://github.com/Prakash-codeMaker/taskops-ai-quality-operations
+- FleetScope: synthetic telemetry reliability lab with 30 local tests and 95.68% line coverage. https://fleetscope-telemetry-lab.vercel.app/
+- GAINN: multi-agent information workflow separating research, drafting and quality control; 2,000+ reported sign-ups. https://ever-news-flow.lovable.app
+- ReLoop: multi-role material coordination workspace with Node.js APIs, authorization and handover history. https://github.com/Prakash-codeMaker/reloop-environmental-hacks
+- BolKeResolve: voice-first, evidence-aware support MVP; demo cases are fictional and it does not access bank accounts or move money. https://bolkeresolve.vercel.app
+
+## Working terms
+- Fixed-scope tasks, paid technical spikes and hourly engineering support considered.
+- Scope, deliverables, exclusions, acceptance checks, fee and payment timing are agreed before implementation.
+- Unpaid production work is not treated as a hiring assessment.
+- No promise of production performance or capabilities beyond the published project evidence.
+
+## Contact
+- Email: p9340297@gmail.com
+- Project brief: https://pcj-portfolio.vercel.app/start-a-project.html
