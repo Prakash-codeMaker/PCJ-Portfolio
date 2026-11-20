@@ -1,0 +1,58 @@
+diff --git a/libs/langgraph/langgraph/pregel/_retry.py b/libs/langgraph/langgraph/pregel/_retry.py
+index 58e2faf..0000000 100644
+--- a/libs/langgraph/langgraph/pregel/_retry.py
++++ b/libs/langgraph/langgraph/pregel/_retry.py
+@@ -861,13 +861,20 @@ def _should_retry_on(retry_policy: RetryPolicy, exc: Exception) -> bool:
+     """Check if the given exception should be retried based on the retry policy."""
+-    if isinstance(retry_policy.retry_on, Sequence):
+-        return isinstance(exc, tuple(retry_policy.retry_on))
+-    elif isinstance(retry_policy.retry_on, type) and issubclass(
+-        retry_policy.retry_on, Exception
+-    ):
+-        return isinstance(exc, retry_policy.retry_on)
+-    elif callable(retry_policy.retry_on):
+-        return retry_policy.retry_on(exc)  # type: ignore[call-arg]
++    retry_on = retry_policy.retry_on
++    if isinstance(retry_on, type) and issubclass(retry_on, Exception):
++        return isinstance(exc, retry_on)
++    elif isinstance(retry_on, Sequence) and not isinstance(retry_on, (str, bytes, bytearray)):
++        retry_types = tuple(retry_on)
++        if not all(
++            isinstance(retry_type, type) and issubclass(retry_type, Exception)
++            for retry_type in retry_types
++        ):
++            raise TypeError(
++                "retry_on must be an Exception class, a list or tuple of Exception classes, or a callable"
++            )
++        return isinstance(exc, retry_types)
++    elif callable(retry_on):
++        return retry_on(exc)  # type: ignore[call-arg]
+     else:
+         raise TypeError(
+             "retry_on must be an Exception class, a list or tuple of Exception classes, or a callable"
+         )
+diff --git a/libs/langgraph/tests/test_retry.py b/libs/langgraph/tests/test_retry.py
+index e251445..0000000 100644
+--- a/libs/langgraph/tests/test_retry.py
++++ b/libs/langgraph/tests/test_retry.py
+@@ -151,2 +151,20 @@ def test_should_retry_on_empty_sequence():
+     # Should not retry when sequence is empty
+     assert _should_retry_on(policy, ValueError("test error")) is False
++
++
++@pytest.mark.parametrize(
++    "retry_on",
++    [
++        "ValueError",
++        b"ValueError",
++        bytearray(b"ValueError"),
++        ["ValueError"],
++        [ValueError, "TypeError"],
++        ["TypeError", ValueError],
++    ],
++)
++def test_should_retry_on_rejects_string_sequences_and_invalid_members(retry_on):
++    policy = RetryPolicy(retry_on=retry_on)  # type: ignore[arg-type]
++
++    with pytest.raises(TypeError, match="retry_on must be an Exception class"):
++        _should_retry_on(policy, ValueError("test error"))
