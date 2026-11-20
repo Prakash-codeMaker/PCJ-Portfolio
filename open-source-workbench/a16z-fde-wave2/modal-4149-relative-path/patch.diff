@@ -1,0 +1,37 @@
+diff --git a/py/modal/_utils/docker_utils.py b/py/modal/_utils/docker_utils.py
+index 3661737..0000000 100644
+--- a/py/modal/_utils/docker_utils.py
++++ b/py/modal/_utils/docker_utils.py
+@@ -112,7 +112,12 @@ def find_dockerignore_file(context_directory: Path, dockerfile_path: Path | None = None) -> Path | None:
+     and if dockerfile path is provided, check if specific <dockerfile_name>.dockerignore
+     file exists in the same directory as <dockerfile_name>
+     Finds the most specific dockerignore file that exists.
+     """
++    # Callers may pass a relative Dockerfile path while the context directory
++    # has already been made absolute. Normalize both before containment checks.
++    context_directory = context_directory.absolute()
++    dockerfile_path = dockerfile_path.absolute() if dockerfile_path is not None else None
++
+     def valid_dockerignore_file(fp):
+         # fp has to exist
+         if not fp.exists():
+
+diff --git a/py/test/docker_utils_test.py b/py/test/docker_utils_test.py
+index bccb0b7..0000000 100644
+--- a/py/test/docker_utils_test.py
++++ b/py/test/docker_utils_test.py
+@@ -120,1 +120,14 @@
+         assert find_dockerignore_file(test_cwd / tmp_dir, dockerfile_path) == dockerignore_path
++
++
++@pytest.mark.usefixtures("tmp_cwd")
++def test_find_specific_dockerignore_file_with_relative_dockerfile_path():
++    test_cwd = Path.cwd()
++    project_dir = Path("project")
++    project_dir.mkdir()
++    dockerfile_path = project_dir / "Dockerfile"
++    dockerfile_path.write_text("")
++    specific_dockerignore = project_dir / "Dockerfile.dockerignore"
++    specific_dockerignore.write_text("**/*.py")
++
++    assert find_dockerignore_file(test_cwd, dockerfile_path) == test_cwd / specific_dockerignore
