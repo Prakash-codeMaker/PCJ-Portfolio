@@ -1,0 +1,30 @@
+diff --git a/pydantic_ai_slim/pydantic_ai/providers/vercel.py b/pydantic_ai_slim/pydantic_ai/providers/vercel.py
+index 6e73af0..0000000 100644
+--- a/pydantic_ai_slim/pydantic_ai/providers/vercel.py
++++ b/pydantic_ai_slim/pydantic_ai/providers/vercel.py
+@@ -73,6 +73,7 @@ class VercelProvider(_OpenAISDKProvider):
+             'openai': openai_model_profile,
+             'vertex': google_cloud_model_profile,
+             'xai': grok_model_profile,
++            'spacexai': grok_model_profile,
+             'zai': _glm_5_3_schema_profile,
+         }
+
+diff --git a/tests/providers/test_vercel.py b/tests/providers/test_vercel.py
+index 14c6b1a..0000000 100644
+--- a/tests/providers/test_vercel.py
++++ b/tests/providers/test_vercel.py
+@@ -121,6 +121,14 @@ def test_vercel_provider_model_profile_routing(mocker: MockerFixture) -> None:
+     grok_mock.assert_called_with('grok-beta')
+     assert profile is not None
+     assert profile.get('json_schema_transformer', None) == OpenAIJsonSchemaTransformer
++
++    # Vercel's current public model catalogue uses the spacexai provider slug for Grok.
++    profile = provider.model_profile('spacexai/grok-4.3')
++    grok_mock.assert_called_with('grok-4.3')
++    assert profile is not None
++    assert profile.get('supports_thinking') is True
++    assert profile.get('grok_reasoning_efforts') == frozenset({'none', 'low', 'medium', 'high'})
++    assert profile.get('grok_supports_builtin_tools') is True
+
+
