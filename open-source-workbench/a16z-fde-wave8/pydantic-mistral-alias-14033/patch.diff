@@ -1,0 +1,40 @@
+diff --git a/pydantic_ai_slim/pydantic_ai/providers/mistral.py b/pydantic_ai_slim/pydantic_ai/providers/mistral.py
+index 612a188..0000000 100644
+--- a/pydantic_ai_slim/pydantic_ai/providers/mistral.py
++++ b/pydantic_ai_slim/pydantic_ai/providers/mistral.py
+@@ -24,8 +24,9 @@ from . import Provider
+ # the Mistral Small 4 and Medium 3.5 families, which accept only `'none'` and `'high'`. Mistral Large 4
+ # also reasons but can't turn it off, so it has its own set, `_LARGE_4_MODELS`, below. Older
+ # `mistral-small-*` / `mistral-medium-*` snapshots (e.g. `mistral-small-2506`, `mistral-medium-2505`)
+-# don't support reasoning and are deliberately excluded, as is `mistral-large-latest` until Mistral
+-# repoints it; keep this set and `_LARGE_4_MODELS` together in sync with the supported model ids
+-# reporting `capabilities.reasoning` on the Mistral `/v1/models` API. The alias ids (`-latest`,
++# don't support reasoning and are deliberately excluded. `mistral-large-latest` was repointed to Large 4
++# on the public API (reported by the issue author on 2026-11-19), so it is included in `_LARGE_4_MODELS`;
++# keep this set and `_LARGE_4_MODELS` together in sync with the supported model ids reporting
++# `capabilities.reasoning` on the Mistral `/v1/models` API. The alias ids (`-latest`,
+ # `mistral-medium`, `mistral-medium-3`) resolve to a reasoning model on the public API; on private
+ # deployments they may point at an older non-reasoning snapshot.
+@@ -53,8 +54,8 @@ _ADJUSTABLE_REASONING_MODELS = frozenset(
+ )
+ 
+ # Mistral Large 4 accepts `'low'`, `'medium'` and `'high'` and rejects `'none'`, so it can't turn reasoning off.
+ # See https://docs.mistral.ai/capabilities/reasoning/.
+-_LARGE_4_MODELS = frozenset({'mistral-large-4', 'mistral-large-4-0'})
++_LARGE_4_MODELS = frozenset({'mistral-large-4', 'mistral-large-4-0', 'mistral-large-latest'})
+ _LARGE_4_REASONING_EFFORTS: frozenset[MistralReasoningEffort] = frozenset({'low', 'medium', 'high'})
+ 
+ 
+diff --git a/tests/models/test_mistral.py b/tests/models/test_mistral.py
+index a7513c3..0000000 100644
+--- a/tests/models/test_mistral.py
++++ b/tests/models/test_mistral.py
+@@ -4079,7 +4079,7 @@ async def test_reasoning_effort_stream_with_tools(allow_model_requests: None) -> None:
+     assert all(kwargs['reasoning_effort'] == 'none' for kwargs in mock_client.chat_completion_kwargs)
+ 
+ 
+-@pytest.mark.parametrize('model_name', ['mistral-large-4', 'mistral-large-4-0'])
++@pytest.mark.parametrize('model_name', ['mistral-large-4', 'mistral-large-4-0', 'mistral-large-latest'])
+ @pytest.mark.parametrize(
+     'thinking, expected_reasoning_effort',
+     [
