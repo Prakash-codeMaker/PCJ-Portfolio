@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080909">
+<meta name="description" content="RecoverIT engineering case study: building an auditable payment-recovery workflow with evidence handling, deterministic state, approval gates, idempotency and monitoring.">
+<meta property="og:title" content="RecoverIT — From payment confusion to an auditable workflow">
+<meta property="og:description" content="A practical case study in AI-assisted evidence interpretation and deterministic workflow control.">
+<meta property="og:type" content="article">
+<link rel="canonical" href="https://pcj-portfolio.vercel.app/recoverit-case-study.html">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@75..100,400..700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>RecoverIT Case Study — Prakash Chand Jain</title>
+<style>
+:root{--bg:#080909;--panel:#101212;--text:#f2f1ec;--muted:#9a9b96;--line:rgba(255,255,255,.09);--accent:#d7ff46;--mint:#7ff0c5;--sans:'Instrument Sans',system-ui,sans-serif;--display:'Space Grotesk',system-ui,sans-serif;--mono:'DM Mono',monospace;--max:1050px}
+*{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--bg)}body{margin:0;background:radial-gradient(50rem 30rem at 80% 0%,rgba(215,255,70,.065),transparent 65%),var(--bg);color:var(--text);font:16px/1.65 var(--sans)}a{color:inherit;text-decoration:none}.shell{width:min(var(--max),calc(100% - 36px));margin:auto}.nav{height:68px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(8,9,9,.82);backdrop-filter:blur(15px);z-index:10}.nav .shell{height:100%;display:flex;justify-content:space-between;align-items:center}.brand{font:700 15px var(--display)}.brand i{color:var(--accent);font-style:normal}.nav a:last-child{font-size:12px;color:var(--accent)}.kicker{font:500 10px var(--mono);text-transform:uppercase;letter-spacing:.14em;color:var(--accent)}.hero{padding:90px 0 55px}.hero h1{font:500 clamp(42px,7vw,76px)/.98 var(--display);letter-spacing:-.07em;max-width:900px;margin:20px 0}.hero p{color:#b7b9b1;font-size:17px;max-width:750px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px}.btn{padding:12px 16px;border-radius:999px;border:1px solid var(--line);font-size:12px;color:#c9cbc3}.btn.primary{background:var(--accent);color:#111;border-color:var(--accent);font-weight:700}.stats{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:40px}.stat{padding:20px;border-right:1px solid var(--line);background:rgba(255,255,255,.015)}.stat:last-child{border:0}.stat b{display:block;font:500 26px var(--display)}.stat span{font-size:10px;color:var(--muted)}section{padding:60px 0;border-top:1px solid rgba(255,255,255,.055)}h2{font:500 clamp(30px,4vw,44px)/1.08 var(--display);letter-spacing:-.05em;margin:0 0 17px}h3{font:500 20px var(--display);margin:0 0 9px}.lead{font-size:15px;color:#c8c9c2;max-width:790px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px;margin-top:25px}.card{border:1px solid var(--line);border-radius:16px;padding:20px;background:rgba(255,255,255,.015)}.card p,.body-copy{font-size:13px;color:var(--muted);line-height:1.75}.mono{font:500 9px var(--mono);color:var(--accent);letter-spacing:.1em;text-transform:uppercase}.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:25px 0}.flow div{padding:18px 12px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.02)}.flow small{display:block;font:9px var(--mono);color:var(--muted)}.flow b{display:block;margin-top:9px;font-size:12px}.diagram{border:1px solid var(--line);border-radius:17px;padding:22px;background:linear-gradient(135deg,rgba(127,240,197,.035),rgba(215,255,70,.02))}.diagram pre{white-space:pre-wrap;font:11px/1.9 var(--mono);color:#cbd0c5;margin:0}.callout{border-left:2px solid var(--accent);padding:15px 18px;background:rgba(215,255,70,.035);color:#c8cbc0;font-size:13px;margin:24px 0}.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.chips span{border:1px solid var(--line);border-radius:99px;padding:7px 10px;color:#b5b9af;font:9px var(--mono)}.footer{padding:35px 0;border-top:1px solid var(--line);color:var(--muted);font-size:11px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+@media(max-width:700px){.hero{padding:65px 0 42px}.stats{grid-template-columns:1fr}.stat{border-right:0;border-bottom:1px solid var(--line)}.stat:last-child{border-bottom:0}.grid{grid-template-columns:1fr}.flow{grid-template-columns:repeat(2,1fr)}}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"RecoverIT — From payment confusion to an auditable workflow","author":{"@type":"Person","name":"Prakash Chand Jain","url":"https://pcj-portfolio.vercel.app/"},"mainEntityOfPage":"https://pcj-portfolio.vercel.app/recoverit-case-study.html","about":["Payment recovery workflows","AI-assisted evidence interpretation","Backend reliability","Human approval controls"],"url":"https://pcj-portfolio.vercel.app/recoverit-case-study.html"}
+</script>
+</head>
+<body>
+<header class="nav"><div class="shell"><a class="brand" href="/">PCJ<i>.</i></a><a href="/start-a-project.html">Discuss a paid project ↗</a></div></header>
+<main>
+<article>
+<header class="hero"><div class="shell">
+<div class="kicker">Engineering case study / 01</div>
+<h1>RecoverIT: from payment confusion to an auditable workflow.</h1>
+<p>A payment problem can span a bank debit, merchant order, gateway reference, refund update and customer conversation. RecoverIT explores how to keep those fragments together in one durable case—while separating AI interpretation from the rules that authorize consequential actions.</p>
+<div class="actions"><a class="btn primary" href="https://recoverit.hatchable.site" target="_blank" rel="noopener">Open live product ↗</a><a class="btn" href="https://github.com/Prakash-codeMaker/RecoverIT" target="_blank" rel="noopener">Inspect source ↗</a><a class="btn" href="https://youtu.be/QKm20xYxkEY" target="_blank" rel="noopener">Watch walkthrough ↗</a></div>
+<div class="stats"><div class="stat"><b>21 / 21</b><span>Synthetic test-mode validation checks</span></div><div class="stat"><b>Explicit</b><span>Human approval for consequential actions</span></div><div class="stat"><b>Durable</b><span>Case state, events and audit history</span></div></div>
+</div></header>
+<section><div class="shell">
+<div class="kicker">01 / The problem</div><h2>The conversation isn't the case.</h2>
+<p class="lead">When money appears to leave an account but the merchant order or refund status is unclear, the user may have evidence in different formats and channels. A chat transcript alone is not enough to track what has been checked, what is missing, who approved an action or whether a later response changed the outcome.</p>
+<div class="grid">
+<div class="card"><div class="mono">Fragmented evidence</div><h3>Facts live in different places</h3><p>Receipts, statements, screenshots, order references and provider messages can describe different parts of the same incident.</p></div>
+<div class="card"><div class="mono">Lost operational state</div><h3>Follow-up is easy to lose</h3><p>A support conversation may end before a provider responds. The next step, owner and reason for waiting should remain attached to the case.</p></div>
+</div>
+</div></section>
+<section><div class="shell">
+<div class="kicker">02 / The workflow</div><h2>One case, from intake to a supported outcome.</h2>
+<p class="lead">RecoverIT structures the process as a sequence of explicit stages. It can wait for missing evidence, retry a check, prepare a legitimate route, request human approval and continue monitoring after an external response.</p>
+<div class="flow"><div><small>01 / INTAKE</small><b>Report</b></div><div><small>02 / INPUTS</small><b>Evidence</b></div><div><small>03 / CHECK</small><b>Verify</b></div><div><small>04 / ANALYSE</small><b>Investigate</b></div><div><small>05 / ROUTE</small><b>Recovery path</b></div><div><small>06 / CONTROL</small><b>Approval</b></div><div><small>07 / FOLLOW-UP</small><b>Monitor</b></div><div><small>08 / CLOSE</small><b>Resolve or escalate</b></div></div>
+</div></section>
+<section><div class="shell">
+<div class="kicker">03 / System design</div><h2>AI handles ambiguity. Deterministic software handles authority.</h2>
+<div class="diagram"><pre>USER STORY + DOCUMENTS + PROVIDER MESSAGES
+                  |
+                  v
+       AI INTERPRETATION LAYER
+  extract facts · classify · find missing inputs
+                  |
+                  v
+          DURABLE CASE LEDGER
+  state · evidence · events · ownership · history
+                  |
+                  v
+       DETERMINISTIC CONTROL LAYER
+  validation · authorization · transition rules
+  idempotency · retries · approval gates
+                  |
+                  v
+       APPROVED EXTERNAL HANDOFF
+                  |
+                  v
+       MONITOR → VERIFY → RESOLVE / ESCALATE</pre></div>
+<div class="callout"><b>Design principle:</b> a model may recommend a next step, but it does not authorize a consequential action. The application checks evidence, permissions, state and approval requirements before proceeding.</div>
+<div class="grid">
+<div class="card"><h3>AI-assisted interpretation</h3><p>Natural-language issue summaries, document interpretation, structured fact extraction, missing-information detection and provider-response interpretation.</p></div>
+<div class="card"><h3>Deterministic controls</h3><p>Authentication, case ownership, evidence gates, state transitions, human approval, duplicate protection, retries, monitoring and escalation rules.</p></div>
+</div>
+</div></section>
+<section><div class="shell">
+<div class="kicker">04 / Reliability</div><h2>Keep the workflow inspectable when something goes wrong.</h2>
+<div class="grid">
+<div class="card"><h3>Durable state</h3><p>Case progress is persisted rather than reconstructed from the latest conversation, so later responses can resume the same workflow.</p></div>
+<div class="card"><h3>Safe repetition</h3><p>Idempotency and explicit transitions help prevent duplicate consequential actions when a task is retried.</p></div>
+<div class="card"><h3>Human control</h3><p>The user sees the proposed destination, channel and message, and must approve consequential contact or handoff.</p></div>
+<div class="card"><h3>Evidence-led closure</h3><p>A case should resolve only when the outcome is supported; otherwise it remains waiting, requests input or escalates.</p></div>
+</div>
+</div></section>
+<section><div class="shell">
+<div class="kicker">05 / Validation and boundaries</div><h2>What the evidence says—and what it does not.</h2>
+<p class="lead">The current project reports 21 of 21 checks passed in synthetic/test mode. That validates the covered demo workflows; it is not evidence of production-scale payment recovery, a financial institution integration, customer funds recovered or live provider coverage beyond what is documented in the repository.</p>
+<div class="callout"><b>Capability boundary:</b> this early-stage product build does not claim independent bank-account or UPI verification, access to private banking credentials, or autonomous movement of money. Synthetic records are labelled as synthetic.</div>
+<div class="chips"><span>Workflow state</span><span>Evidence handling</span><span>Human approval</span><span>Idempotency</span><span>Retries</span><span>Audit history</span><span>Test-mode checks</span></div>
+</div></section>
+<section><div class="shell">
+<div class="kicker">06 / Similar engineering work</div><h2>Have a workflow that needs the same engineering discipline?</h2>
+<p class="lead">I take on scoped paid tasks involving API integrations, AI-enabled operations, backend workflows, evidence and review tooling, reliability and test automation.</p>
+<div class="actions"><a class="btn primary" href="/start-a-project.html">Send a project brief ↗</a><a class="btn" href="mailto:p9340297@gmail.com?subject=Paid%20engineering%20project%20inquiry">Email directly ↗</a></div>
+</div></section>
+</article>
+</main>
+<footer><div class="shell footer"><span>© 2026 Prakash Chand Jain · Engineering case study</span><span><a href="/">Portfolio</a> · <a href="/start-a-project.html">Work with me</a> · <a href="https://github.com/Prakash-codeMaker/RecoverIT">Source code</a></span></div></footer>
+</body></html>
