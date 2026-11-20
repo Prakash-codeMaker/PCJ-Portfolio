@@ -1,0 +1,66 @@
+diff --git a/py/modal/_utils/docker_utils.py b/py/modal/_utils/docker_utils.py
+index 3661737..0000000 100644
+--- a/py/modal/_utils/docker_utils.py
++++ b/py/modal/_utils/docker_utils.py
+@@ -1,4 +1,5 @@
+ # Copyright Modal Labs 2024
++import json
+ import re
+ import shlex
+ from collections.abc import Sequence
+@@ -33,4 +34,16 @@ def extract_copy_command_patterns(dockerfile_lines: Sequence[str]) -> list[str]:
+             match = copy_pattern.match(current_command)
+             if match:
+                 args = match.group(1)
+-                parts = shlex.split(args)
++                # Docker supports JSON/exec-form COPY arguments as well as shell form.
++                # Parse leading flags separately so paths containing spaces remain intact.
++                flags_match = re.match(r"^((?:--[^\s]+\s+)*)(.*)$", args)
++                flags, remainder = flags_match.groups() if flags_match else ("", args)
++                try:
++                    json_parts = json.loads(remainder) if remainder.startswith("[") else None
++                except json.JSONDecodeError:
++                    json_parts = None
++
++                if isinstance(json_parts, list) and len(json_parts) >= 2 and all(isinstance(part, str) for part in json_parts):
++                    parts = shlex.split(flags) + json_parts
++                else:
++                    parts = shlex.split(args)
+@@ -61,7 +74,7 @@
+                                 f"COPY command: {source} using special flags/arguments/variables are not supported"
+                             )
+ 
+-                        if source == ".":
++                        if source.rstrip("/") == ".":
+                             copy_source_patterns.add("./**")
+                         else:
+                             copy_source_patterns.add(source)
+
+diff --git a/py/test/docker_utils_test.py b/py/test/docker_utils_test.py
+index bccb0b7..0000000 100644
+--- a/py/test/docker_utils_test.py
++++ b/py/test/docker_utils_test.py
+@@ -34,7 +34,23 @@
+         (
+             ["COPY --link files/app.py /dest/"],
+             {"files/app.py"},
+         ),
++        (
++            ['COPY ["files/dir1", "/dest/"]'],
++            {"files/dir1"},
++        ),
++        (
++            ['COPY ["files/my dir/a.txt", "/dest/"]'],
++            {"files/my dir/a.txt"},
++        ),
++        (
++            ['COPY --chown=1000:1000 ["files/a.txt", "files/b.txt", "/dest/"]'],
++            {"files/a.txt", "files/b.txt"},
++        ),
++        (
++            ["COPY ./ /dest/"],
++            {"./**"},
++        ),
+     ],
+ )
+ def test_extract_copy_command_patterns(copy_commands, expected_patterns):

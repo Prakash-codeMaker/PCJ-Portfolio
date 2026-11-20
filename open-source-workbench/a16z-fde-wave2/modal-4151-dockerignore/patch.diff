@@ -1,0 +1,59 @@
+diff --git a/py/modal/_image.py b/py/modal/_image.py
+index 3ed29bc..0000000 100644
+--- a/py/modal/_image.py
++++ b/py/modal/_image.py
+@@ -54,2 +54,3 @@ from ._utils.mount_utils import validate_only_modal_volumes, validate_volumes_by_object_id
+ from ._utils.name_utils import check_object_name
++from ._utils.pattern_utils import read_ignorefile
+ from .client import _Client
+@@ -426,7 +426,8 @@
+             context_dir = Path.cwd() if context_dir is None else Path(context_dir).absolute()
+             dockerignore_file = find_dockerignore_file(context_dir, dockerfile_path)
+-            ignore_fn = (
+-                FilePatternMatcher(*dockerignore_file.read_text("utf8").splitlines())
+-                if dockerignore_file
+-                else _ignore_fn(())
+-            )
++            if dockerignore_file:
++                with dockerignore_file.open("r", encoding="utf8") as ignore_reader:
++                    ignore_patterns = read_ignorefile(ignore_reader)
++                ignore_fn = FilePatternMatcher(*ignore_patterns)
++            else:
++                ignore_fn = _ignore_fn(())
+
+diff --git a/py/test/image_test.py b/py/test/image_test.py
+index 6e202b5..0000000 100644
+--- a/py/test/image_test.py
++++ b/py/test/image_test.py
+@@ -1587,6 +1587,31 @@ def test_image_dockerfile_copy_auto_dockerignore(builder_version, servicer, client, use_dockerfile):
+     assert files == {Path("/") / rel_top_dir / "Dockerfile", Path("/") / rel_top_dir / "file.py"}
+ 
+ 
++@pytest.mark.parametrize("use_dockerfile", (True, False))
++@pytest.mark.usefixtures("tmp_cwd")
++def test_image_dockerfile_copy_auto_dockerignore_leading_slash_negation(builder_version, servicer, client, use_dockerfile):
++    Path("app.py").write_text("print('ok')\n")
++    Path("keep.txt").write_text("keep\n")
++    Path("drop.txt").write_text("drop\n")
++    dockerfile = Path("Dockerfile")
++    dockerfile.write_text("FROM python:3.12-slim\nCOPY . /app/\n")
++    Path(".dockerignore").write_text("*.txt\n!/keep.txt\n")
++
++    if use_dockerfile:
++        image = Image.from_dockerfile(dockerfile)
++        layer = 1 if builder_version <= "2025.06" else 0
++    else:
++        image = Image.debian_slim().dockerfile_commands(["COPY . /app/"])
++        layer = 0
++
++    build_image(image, client)
++    layers = get_image_layers(image.object_id, servicer)
++    mount_id = layers[layer].context_mount_id
++    files = {Path(fn) for fn in servicer.mount_contents[mount_id].keys()}
++    assert Path("/keep.txt") in files
++    assert Path("/drop.txt") not in files
++
++
+ @pytest.mark.parametrize("use_dockerfile", (True, False))
+ @pytest.mark.usefixtures("tmp_cwd")
+ def test_image_dockerfile_copy_ignore_from_file(builder_version, servicer, client, use_dockerfile):
