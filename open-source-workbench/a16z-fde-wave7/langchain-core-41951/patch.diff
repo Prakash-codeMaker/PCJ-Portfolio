@@ -1,0 +1,83 @@
+diff --git a/libs/core/langchain_core/utils/_gateway.py b/libs/core/langchain_core/utils/_gateway.py
+index c927f79..0000000 100644
+--- a/libs/core/langchain_core/utils/_gateway.py
++++ b/libs/core/langchain_core/utils/_gateway.py
+@@ -20,7 +20,7 @@
+ from contextlib import contextmanager
+ from contextvars import ContextVar
+ from typing import TYPE_CHECKING, Any, NamedTuple
+-from urllib.parse import urlsplit
++from urllib.parse import urlsplit, urlunsplit
+
+ from pydantic import SecretStr
+
+@@ -155,6 +155,13 @@
+     kept = {k: v for k, v in (headers or {}).items() if k.lower() not in names}
+     return {**kept, **gateway_headers}
+
+
++def _append_provider_path(base_url: str, provider_path: str) -> str:
++    """Append the provider path to the URL path while preserving query/fragment."""
++    parsed = urlsplit(base_url)
++    path = f"{parsed.path.rstrip('/')}/{provider_path.lstrip('/')}"
++    return urlunsplit(parsed._replace(path=path))
++
++
+ def _override_base_url(
+     override: _GatewayOverride, base_url: str | None, provider_path: str
+ ) -> str:
+@@ -171,7 +178,7 @@
+     """
+     if isinstance(base_url, str) and base_url.startswith(f"{override.base_url}/"):
+         return base_url
+-    return f"{override.base_url}/{provider_path}"
++    return _append_provider_path(override.base_url, provider_path)
+
+
+ _TRUE_VALUES = ("true", "1", "yes")
+ _FALSE_VALUES = ("false", "0", "no")
+
+
+@@ -229,8 +236,8 @@
+         _LANGSMITH_GATEWAY_DEFAULT_BASE
+         if raw.lower() in _TRUE_VALUES
+         else raw.rstrip("/")
+     )
+-    return f"{base}/{provider_path}"
++    return _append_provider_path(base, provider_path)
+
+
+ def _same_origin(first: str, second: str) -> bool:
+
+diff --git a/libs/core/tests/unit_tests/utils/test_gateway.py b/libs/core/tests/unit_tests/utils/test_gateway.py
+index 30e023c..0000000 100644
+--- a/libs/core/tests/unit_tests/utils/test_gateway.py
++++ b/libs/core/tests/unit_tests/utils/test_gateway.py
+@@ -89,7 +89,12 @@
+     assert (
+         _resolve_gateway_base_url(_PATH) == "https://eu.gateway.example.com/openai/v1"
+     )
+
+
++def test_base_url_custom_preserves_query_parameters(monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.setenv("LANGSMITH_GATEWAY", "https://eu.gateway.example.com/proxy?tenant=demo")
++    assert _resolve_gateway_base_url(_PATH) == "https://eu.gateway.example.com/proxy/openai/v1?tenant=demo"
+
+
+ # --- api key + base url resolution matrix ---------------------------------
+ # Each case mirrors a documented requirement scenario.
+
+@@ -478,7 +483,13 @@
+     assert config.base_url == gateway_v1
+     assert config.api_key.get_secret_value() == "ctx-key"
+
+
++def test_context_gateway_base_url_preserves_query_parameters() -> None:
++    with langsmith_gateway(api_key="ctx-key", base_url="https://gateway.example.test/proxy?tenant=demo"):
++        config = _config()
++    assert config.base_url == "https://gateway.example.test/proxy/openai/v1?tenant=demo"
+
+
+ @pytest.mark.parametrize(
+     "base_url",
+     [
