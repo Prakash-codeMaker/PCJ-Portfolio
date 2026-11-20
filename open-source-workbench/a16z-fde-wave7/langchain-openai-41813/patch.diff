@@ -1,0 +1,43 @@
+diff --git a/libs/partners/openai/langchain_openai/chat_models/base.py b/libs/partners/openai/langchain_openai/chat_models/base.py
+index bbad6fd..0000000 100644
+--- a/libs/partners/openai/langchain_openai/chat_models/base.py
++++ b/libs/partners/openai/langchain_openai/chat_models/base.py
+@@ -2144,8 +2144,18 @@
+             )
+             raise TypeError(msg)
+
++        if not choices:
++            # An empty choices list otherwise produces ChatResult(generations=[]),
++            # which later becomes an unhelpful IndexError in invoke()/ainvoke().
++            msg = (
++                "Received response with empty list for 'choices'. "
++                "OpenAI-compatible APIs must return at least one choice. "
++                f"Full response keys: {list(response_dict.keys())}"
++            )
++            raise TypeError(msg)
++
+         token_usage = response_dict.get("usage")
+         service_tier = response_dict.get("service_tier")
+
+         for res in choices:
+             message = _convert_dict_to_message(res["message"])
+
+diff --git a/libs/partners/openai/tests/unit_tests/chat_models/test_base.py b/libs/partners/openai/tests/unit_tests/chat_models/test_base.py
+index 520960a..0000000 100644
+--- a/libs/partners/openai/tests/unit_tests/chat_models/test_base.py
++++ b/libs/partners/openai/tests/unit_tests/chat_models/test_base.py
+@@ -2178,7 +2178,14 @@
+     with pytest.raises(ValueError, match="got object"):
+         llm._create_chat_result(object())  # type: ignore[arg-type]
+
+
++def test_create_chat_result_raises_on_empty_choices() -> None:
++    """An empty Chat Completions choices list must fail before invoke indexes it."""
++    llm = ChatOpenAI(model=OPENAI_TEST_MODEL)
++    with pytest.raises(TypeError, match="empty list for 'choices'"):
++        llm._create_chat_result({"choices": []})
+
+
+ def test_create_chat_result_truncates_unexpected_response_body() -> None:
+     """A large response body must not be echoed in full in the error message."""
+     llm = ChatOpenAI(model=OPENAI_TEST_MODEL)
