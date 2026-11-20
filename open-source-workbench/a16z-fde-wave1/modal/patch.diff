@@ -1,0 +1,54 @@
+diff --git a/py/modal/retries.py b/py/modal/retries.py
+index 09bae01..0000000 100644
+--- a/py/modal/retries.py
++++ b/py/modal/retries.py
+@@ -120,8 +120,11 @@ class RetryManager:
+         if attempt_count < 1:
+             raise ValueError(f"Cannot compute retry delay. attempt_count must be at least 1, but was {attempt_count}")
+         delay_ms = retry_policy.initial_delay_ms * (retry_policy.backoff_coefficient ** (attempt_count - 1))
+-        if delay_ms < MIN_INPUT_RETRY_DELAY_MS:
+-            return MIN_INPUT_RETRY_DELAY_MS
+-        if delay_ms > MAX_INPUT_RETRY_DELAY_MS:
+-            return MAX_INPUT_RETRY_DELAY_MS
+-        return delay_ms
++        # Older/internal policies may leave max_delay_ms unset; keep their
++        # historical global ceiling. Public Retries policies populate it.
++        configured_max_delay_ms = retry_policy.max_delay_ms or MAX_INPUT_RETRY_DELAY_MS
++        upper_bound_ms = max(
++            MIN_INPUT_RETRY_DELAY_MS,
++            min(configured_max_delay_ms, MAX_INPUT_RETRY_DELAY_MS),
++        )
++        return min(max(delay_ms, MIN_INPUT_RETRY_DELAY_MS), upper_bound_ms)
+
+diff --git a/py/test/retries_test.py b/py/test/retries_test.py
+index 4d0c05e..0000000 100644
+--- a/py/test/retries_test.py
++++ b/py/test/retries_test.py
+@@ -3,6 +3,7 @@
+ 
+ import modal
+ from modal.exception import InvalidError
++from modal.retries import RetryManager
+
+@@ -65,3 +66,23 @@
+         exponential_backoff_modal.remote()
+         exponential_with_max_delay_modal.remote()
+         zero_retries_modal.remote()
++
++@pytest.mark.parametrize(
++    "max_delay, initial_delay, backoff, expected",
++    [
++        (1.0, 1.0, 2.0, [1000, 1000, 1000, 1000]),
++        (3.0, 1.0, 2.0, [1000, 2000, 3000, 3000]),
++        (5.0, 2.0, 3.0, [2000, 5000, 5000, 5000]),
++    ],
++)
++def test_retry_manager_respects_max_delay(max_delay, initial_delay, backoff, expected):
++    policy = modal.Retries(
++        max_retries=len(expected),
++        initial_delay=initial_delay,
++        backoff_coefficient=backoff,
++        max_delay=max_delay,
++    )._to_proto()
++    manager = RetryManager(policy)
++    assert [manager.get_delay_ms() for _ in expected] == expected
